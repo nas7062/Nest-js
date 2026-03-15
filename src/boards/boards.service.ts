@@ -9,7 +9,7 @@ export class BoardsService {
   constructor(
     @InjectRepository(BoardEntity)
     private readonly boardsRepository: Repository<BoardEntity>,
-  ) {}
+  ) { }
 
   // getAllBoards(): Board[] {
   //   return this.boards;
@@ -45,6 +45,24 @@ export class BoardsService {
     }
     return found;
   }
+
+  async deleteBoardById(id: number): Promise<void> {
+    const found = await this.boardsRepository.delete(id);
+    if (found.affected === 0) {
+      throw new NotFoundException(`Board ${id} not found`);
+    }
+  }
+
+  async updateBoardStatus(id: number, status: BoardStatus): Promise<BoardEntity> {
+    const board = await this.getBoardById(id);
+    board.status = status;
+    await this.boardsRepository.save(board);
+    return board;
+  }
+  async getAllBoards(): Promise<BoardEntity[]> {
+    return this.boardsRepository.find();
+  }
+
   // getBoardById(id: string): Board {
   //   const board = this.boards.find(board => board.id === id);
   //   if (!board) {
