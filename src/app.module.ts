@@ -6,11 +6,13 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { typeOrmConfig } from './configs/typeorm.config';
 import { BoardsRepository } from './boards/boards.repository';
 
-
 @Module({
-  imports: [TypeOrmModule.forRoot(typeOrmConfig), BoardsModule,
-  TypeOrmModule.forFeature([BoardsRepository])],
+  imports: [
+    TypeOrmModule.forRoot(typeOrmConfig),
+    BoardsModule,
+    TypeOrmModule.forFeature([BoardsRepository]),
+  ],
   controllers: [BoardsController],
-  providers: [BoardsService]
+  providers: [BoardsService],
 })
-export class AppModule { }
+export class AppModule {}

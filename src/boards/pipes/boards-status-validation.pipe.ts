@@ -1,17 +1,17 @@
-import { ArgumentMetadata, BadRequestException, PipeTransform } from "@nestjs/common";
-import { BoardStatus } from "../boards.status.enum";
+import {
+  ArgumentMetadata,
+  BadRequestException,
+  PipeTransform,
+} from '@nestjs/common';
+import { BoardStatus } from '../boards.status.enum';
 
 export class BoardsStatusValidationPipe implements PipeTransform {
-
-  readonly StatusOptions = [
-    BoardStatus.PUBLIC,
-    BoardStatus.PRIVATE
-  ]
+  readonly StatusOptions = [BoardStatus.PUBLIC, BoardStatus.PRIVATE];
 
   transform(value: any, metadata: ArgumentMetadata) {
     value = value.toUpperCase();
     if (!this.isStatusValid(value)) {
-      throw new BadRequestException(`{value} is not Status Options`)
+      throw new BadRequestException(`{value} is not Status Options`);
     }
     return value;
   }
