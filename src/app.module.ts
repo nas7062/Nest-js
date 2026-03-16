@@ -5,12 +5,14 @@ import { BoardsService } from './boards/boards.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { typeOrmConfig } from './configs/typeorm.config';
 import { BoardsRepository } from './boards/boards.repository';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
     TypeOrmModule.forRoot(typeOrmConfig),
     BoardsModule,
     TypeOrmModule.forFeature([BoardsRepository]),
+    AuthModule,
   ],
   controllers: [BoardsController],
   providers: [BoardsService],
