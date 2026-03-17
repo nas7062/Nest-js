@@ -4,6 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { BoardEntity } from './boards.entity';
 import { Repository } from 'typeorm';
 import { BoardStatus } from './boards.status.enum';
+import { UserEntity } from 'src/auth/user.entity';
 @Injectable()
 export class BoardsService {
   constructor(
@@ -27,12 +28,13 @@ export class BoardsService {
   //   return board;
   // }
 
-  async createBoard(createBoardDto: CreateBoardDto): Promise<BoardEntity> {
+  async createBoard(createBoardDto: CreateBoardDto, user: UserEntity): Promise<BoardEntity> {
     const { title, description } = createBoardDto;
     const board = this.boardsRepository.create({
       title,
       description,
       status: BoardStatus.PUBLIC,
+      user,
     });
     await this.boardsRepository.save(board);
     return board;
@@ -46,8 +48,8 @@ export class BoardsService {
     return found;
   }
 
-  async deleteBoardById(id: number): Promise<void> {
-    const found = await this.boardsRepository.delete(id);
+  async deleteBoardById(id: number, user: UserEntity): Promise<void> {
+    const found = await this.boardsRepository.delete({ id, user });
     if (found.affected === 0) {
       throw new NotFoundException(`Board ${id} not found`);
     }
@@ -62,7 +64,9 @@ export class BoardsService {
   async getAllBoards(): Promise<BoardEntity[]> {
     return this.boardsRepository.find();
   }
-
+  async getAllBoardsByUser(user: UserEntity): Promise<BoardEntity[]> {
+    return this.boardsRepository.find({ where: { user } });
+  }
   // getBoardById(id: string): Board {
   //   const board = this.boards.find(board => board.id === id);
   //   if (!board) {
