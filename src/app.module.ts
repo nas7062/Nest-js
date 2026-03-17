@@ -3,18 +3,29 @@ import { BoardsModule } from './boards/boards.module';
 import { BoardsController } from './boards/boards.controller';
 import { BoardsService } from './boards/boards.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { typeOrmConfig } from './configs/typeorm.config';
-import { BoardsRepository } from './boards/boards.repository';
 import { AuthModule } from './auth/auth.module';
+import { typeOrmConfig } from './configs/typeorm.config';
+import { JwtModule } from '@nestjs/jwt';
+import { PassportModule } from '@nestjs/passport';
+import { JwtStrategy } from './auth/jwt-strategy';
 
 @Module({
   imports: [
+    PassportModule.register({
+      defaultStrategy: 'jwt',
+    }),
     TypeOrmModule.forRoot(typeOrmConfig),
     BoardsModule,
-    TypeOrmModule.forFeature([BoardsRepository]),
     AuthModule,
+    JwtModule.register({
+      secret: 'secretKey',
+      signOptions: {
+        expiresIn: 3600,
+      }
+    })
   ],
   controllers: [BoardsController],
-  providers: [BoardsService],
+  providers: [BoardsService, JwtStrategy],
+  exports: [JwtStrategy, PassportModule]
 })
-export class AppModule {}
+export class AppModule { }
